@@ -21,10 +21,6 @@ if [ -e /run/secrets/htpasswd ]; then
  chown nginx:nginx /var/www/.htpasswd
 fi
 
-if [ -e /run/secrets/env ]; then
- cp /run/secrets/env /var/www/html/.env
-fi
-
 # Set custom webroot
 if [ ! -z "$WEBROOT" ]; then
  sed -i "s#root /var/www/html;#root ${WEBROOT};#g" /etc/nginx/sites-available/default.conf
@@ -70,6 +66,10 @@ if [ ! -d "/var/www/html/.git" ]; then
      chown -Rf nginx.nginx /var/www/html
    fi
  fi
+fi
+
+if [ -e /run/secrets/env ]; then
+ cp /run/secrets/env /var/www/html/.env
 fi
 
 # Enable custom nginx config files if they exist
