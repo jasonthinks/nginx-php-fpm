@@ -11,10 +11,18 @@ if [[ "$GIT_USE_SSH" == "1" ]] ; then
   echo -e "Host *\n\tUser ${GIT_USERNAME}\n\n" >> /root/.ssh/config
 fi
 
-if [ ! -z "$SSH_KEY" ]; then
- echo $SSH_KEY > /root/.ssh/id_rsa.base64
- base64 -d /root/.ssh/id_rsa.base64 > /root/.ssh/id_rsa
+if [ -e /run/secrets/bitbucket_key ]; then
+ cp /run/secrets/bitbucket_key /root/.ssh/id_rsa
  chmod 600 /root/.ssh/id_rsa
+fi
+
+if [ -e /run/secrets/htpasswd ]; then
+ cp /run/secrets/htpasswd /var/www/.htpasswd
+ chown nginx:nginx /var/www/.htpasswd
+fi
+
+if [ -e /run/secrets/env ]; then
+ cp /run/secrets/env /var/www/html/.env
 fi
 
 # Set custom webroot
@@ -87,8 +95,10 @@ fi
 # Display PHP error's or not
 if [[ "$ERRORS" != "1" ]] ; then
  echo php_flag[display_errors] = off >> /usr/local/etc/php-fpm.conf
+ echo php_flag[display_errors] = off >> /usr/local/etc/conf.d/www.conf
 else
  echo php_flag[display_errors] = on >> /usr/local/etc/php-fpm.conf
+ echo php_flag[display_errors] = on >> /usr/local/etc/conf.d/www.conf
 fi
 
 # Display Version Details or not
