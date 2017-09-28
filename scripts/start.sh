@@ -95,11 +95,15 @@ fi
 # Display PHP error's or not
 if [[ "$ERRORS" != "1" ]] ; then
  echo php_flag[display_errors] = off >> /usr/local/etc/php-fpm.conf
- echo php_flag[display_errors] = off >> /usr/local/etc/conf.d/www.conf
+ echo php_flag[display_errors] = off >> /usr/local/etc/php-fpm.d/www.conf
 else
  echo php_flag[display_errors] = on >> /usr/local/etc/php-fpm.conf
- echo php_flag[display_errors] = on >> /usr/local/etc/conf.d/www.conf
+ echo php_flag[display_errors] = on >> /usr/local/etc/php-fpm.d/www.conf
 fi
+
+# change to tcp
+sed -i "s/\/var\/run\/php-fpm.sock/127.0.0.1:7000/g" /usr/local/etc/php-fpm.d/www.conf
+sed -i "s/;listen.allowed_clients/listen.allowed_clients/g" /usr/local/etc/php-fpm.d/www.conf
 
 # Display Version Details or not
 if [[ "$HIDE_NGINX_HEADERS" == "0" ]] ; then
