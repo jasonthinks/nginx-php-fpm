@@ -104,6 +104,9 @@ fi
 # change to tcp
 sed -i "s/\/var\/run\/php-fpm.sock/127.0.0.1:7000/g" /usr/local/etc/php-fpm.d/www.conf
 sed -i "s/;listen.allowed_clients/listen.allowed_clients/g" /usr/local/etc/php-fpm.d/www.conf
+# set max children
+#sed -i "s/pm.max_children = 4/pm.max_children = 30/g" /usr/local/etc/php-fpm.d/www.conf
+#sed -i "s/pm.start_servers = 4/pm.start_servers = 12/g" /usr/local/etc/php-fpm.d/www.conf
 
 # Display Version Details or not
 if [[ "$HIDE_NGINX_HEADERS" == "0" ]] ; then
@@ -111,6 +114,10 @@ if [[ "$HIDE_NGINX_HEADERS" == "0" ]] ; then
 else
  sed -i "s/expose_php = On/expose_php = Off/g" /usr/local/etc/php-fpm.conf
 fi
+
+# add custom logs
+#echo -e "log_format access_logs '[ACCESS]\$remote_addr - \$remote_user [\$time_local] \"\$request\" \$status \$body_bytes_sent \"\$http_referer\" \"\$http_user_agent\" \$request_time \$upstream_response_time'\n\n" >> /etc/nginx/nginx.conf
+#echo -e "log_format error_logs '[ERROR]\$remote_addr - \$remote_user [\$time_local] \"\$request\" \$status \$body_bytes_sent \"\$http_referer\" \"\$http_user_agent\" \$request_time \$upstream_response_time'\n\n" >> /etc/nginx/nginx.conf
 
 # Pass real-ip to logs when behind ELB, etc
 if [[ "$REAL_IP_HEADER" == "1" ]] ; then
@@ -130,6 +137,9 @@ if [ -f /etc/nginx/sites-available/default-ssl.conf ]; then
   fi
  fi
 fi
+
+# Increase the time limit
+echo -e "\nmax_execution_time = 300" >> /usr/local/etc/php/conf.d/docker-vars.ini
 
 # Increase the memory_limit
 if [ ! -z "$PHP_MEM_LIMIT" ]; then

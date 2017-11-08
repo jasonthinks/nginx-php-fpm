@@ -200,6 +200,7 @@ RUN echo @testing http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repo
     php -r "unlink('composer-setup.php');"  && \
     pip install -U pip && \
     pip install -U certbot && \
+    pip install supervisor-stdout && \
     mkdir -p /etc/letsencrypt/webrootauth && \
     apk del gcc musl-dev linux-headers libffi-dev augeas-dev python-dev make autoconf
 #    ln -s /usr/bin/php7 /usr/bin/php
